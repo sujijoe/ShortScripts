@@ -1,0 +1,48 @@
+#!/bin/bash
+
+VM_NAME="skj"
+
+if multipass info "$VM_NAME" >/dev/null 2>&1; then
+    STATE=$(multipass info "$VM_NAME" | grep State | awk '{print $2}')
+    if [ "$STATE" != "Running" ]; then
+        MP_CMD="multipass start $VM_NAME && multipass shell $VM_NAME"
+    else
+        MP_CMD="multipass shell $VM_NAME"
+    fi
+else
+    MP_CMD="multipass launch --name $VM_NAME"
+fi
+
+osascript <<EOF
+tell application "Terminal"
+    activate
+
+    -- First tab: iOS project
+    do script "cd /Users/sujithkoottunkal/Documents/CODE/iOS/OC3.0" in selected tab of front window
+
+    -- Second tab
+    tell application "System Events" to tell process "Terminal" to keystroke "t" using command down
+    delay 0.2
+    do script "cd /Users/sujithkoottunkal/Documents/CODE/Android/OC3.0" in selected tab of front window
+
+    -- Third tab
+    tell application "System Events" to tell process "Terminal" to keystroke "t" using command down
+    delay 0.2
+    do script "mm" in selected tab of front window
+
+    -- Fourth tab (Multipass)
+    tell application "System Events" to tell process "Terminal" to keystroke "t" using command down
+    delay 0.2
+    do script "$MP_CMD" in selected tab of front window
+
+    -- 🔥 Select back the first tab
+    set selected tab of front window to tab 1 of front window
+
+    -- Wait a bit (VERY important)
+    delay 0.5
+
+    -- Force select first tab
+    set selected tab of front window to item 1 of tabs of front window
+
+end tell
+EOF

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+VM_NAME="skj"
+
+if multipass info "$VM_NAME" >/dev/null 2>&1; then
+    STATE=$(multipass info "$VM_NAME" | grep State | awk '{print $2}')
+    if [ "$STATE" != "Running" ]; then
+        MP_CMD="multipass start $VM_NAME && multipass shell $VM_NAME"
+    else
+        MP_CMD="multipass shell $VM_NAME"
+    fi
+else
+    MP_CMD="multipass launch --name $VM_NAME"
+fi
+
+# Open tabs in gnome-terminal (default on Ubuntu/GNOME)
+# Falls back to xterm if gnome-terminal is unavailable
+if command -v gnome-terminal &>/dev/null; then
+    gnome-terminal \
+        --tab --title="iOS" -- bash -c "cd ~/Documents/CODE/iOS/OC3.0; exec bash" \
+        --tab --title="Android" -- bash -c "cd ~/Documents/CODE/Android/OC3.0; exec bash" \
+        --tab --title="MM" -- bash -c "mm; exec bash" \
+        --tab --title="Multipass" -- bash -c "$MP_CMD; exec bash"
+elif command -v xterm &>/dev/null; then
+    xterm -e "cd ~/Documents/CODE/iOS/OC3.0; bash" &
+    xterm -e "cd ~/Documents/CODE/Android/OC3.0; bash" &
+    xterm -e "mm; bash" &
+    xterm -e "$MP_CMD; bash" &
+else
+    echo "No supported terminal emulator found. Install gnome-terminal or xterm."
+    exit 1
+fi

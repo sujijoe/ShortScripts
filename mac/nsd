@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Prompt the user for a commit message
+echo "Running 'npm run start:dev'."
+npm run start:dev
+
