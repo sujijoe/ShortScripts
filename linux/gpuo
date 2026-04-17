@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Get the current branch name
+current_branch=$(git branch --show-current)
+
+# Push to the remote with the current branch
+git push -u origin "$current_branch"
+
+# Confirm the push action
+echo "Pushed to origin/$current_branch"
