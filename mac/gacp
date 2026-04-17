@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Prompt the user for a commit message
+echo "Enter commit message: "
+read user_input
+
+# Add all changes
+git add .
+
+# Use the user input as the commit message
+git commit -m "$user_input"
+
+# Confirm the action
+echo "Committed with message: '$user_input'"
+
+# Get the current branch name
+current_branch=$(git branch --show-current)
+
+# Push to the remote with the current branch
+git push -u origin "$current_branch"
+
+# Confirm the push action
+echo "Pushed to origin/$current_branch"
